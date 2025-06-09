@@ -1,4 +1,4 @@
-# Cornell-Data-Science-Certificate (R)
+# Cornell-Data-Science-Certificate
 Course projects highlighting the skills gained during my [certificate](https://ecornell.cornell.edu/certificates/data-science-analytics/data-science/).
 
 ## 📚 Certificate Overview
@@ -12,4 +12,4 @@ The data science certificate consisted of the following core courses:
 5. **Supervised Learning Techniques**
 6. **Neural Networks and Machine Learning**
 
-This repo contains the hands-on course projects done using R.
+This repository contains hands-on projects I completed using R as part of the data science coursework.
