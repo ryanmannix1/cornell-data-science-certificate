@@ -6,6 +6,9 @@ output:
   html_document:
     toc: true
     toc_depth: 2
+  pdf_document:
+    toc: true
+    toc_depth: 2
 ---
 
 ```{r setup, echo=TRUE, results= 'hide', message=FALSE, warning=FALSE}
@@ -67,6 +70,7 @@ frame_filt$SQUARE <- as.numeric(frame_filt$SQUARE)
 ```{r split-train-test, echo=TRUE}
 # Load the pre-sampled 70% training indices
 load("ind2.RData") #ind <- sample(1:nrow(frame_filt), (0.7*nrow(frame_filt)))
+set.seed(42)
 train <- frame_filt[ind,]
 test<- frame_filt[-ind,]
 ```
@@ -210,15 +214,14 @@ train_NN_h2o <- as.h2o(train_NN)
 test_NN_h2o<- as.h2o(test_NN)
 
 # List of dependent variables for model to use.
-X_list <- colnames(train_NN)
-X_list <- X_list[c(-15)]
+X_list <- setdiff(colnames(train_NN),"PRICE")
 ```
 
 
 # 4. Model Training with H2O Deep Learning
 
 ### Grid Search for Optimal Model
-```{r run-grid, echo=TRUE, echo=TRUE, results= 'hide', message=FALSE, warning=FALSE}
+```{r run-grid, echo=TRUE, results= 'hide', message=FALSE, warning=FALSE}
 hyper_params <- list(
   activation= c("Rectifier", "Tanh"),
   hidden = list(c(9,6,4), c(36,18,9)), 
@@ -259,38 +262,96 @@ h2o.varimp_plot(best_model, 10)
 ```
 
 # 5. Model Predictions & Evaluation
-### Training Set Predictions
-```{r train-set-predictions, echo=TRUE, results= 'hide', message=FALSE, warning=FALSE}
+### Train Set Mean Error / Prediction Price vs. Actual Price
+```{r train-set-error, echo=TRUE, warning=FALSE, message=FALSE}
 #Training Set Predictions / Evaluation
-train_predictions <- h2o.predict(best_model,train_NN_h2o)
-print(train_predictions)
+train_pred_df <- as.data.frame(h2o.predict(best_model,train_NN_h2o))
+actual_train <- as.vector(as.data.frame(train_NN_h2o)$PRICE)
+
+# MAE for Test Set
+mean_error_train <- mean(abs(train_pred_df$predict - actual_train))
+
+# RMSE for Test Set
+rmse_train <- sqrt(mean((train_pred_df$predict - actual_train)^2))
+
+# R² for Test Set
+sst_train <- sum((actual_train - mean(actual_train))^2)
+sse_train <- sum((train_pred_df$predict - actual_train)^2)
+r2_train <- 1 - sse_train/sst_train
+
+#Print train results clearly
+cat("Train MAE:", round(mean_error_train,2), "\n")
+cat("Train RMSE:", round(rmse_train,2), "\n")
+cat("Train R²:", round(r2_train,2), "\n")
+
+# Combine actual and predicted values to set axis limits appropriately
+all_vals_train <- c(actual_train, train_pred_df$predict)
+
+# Plot predicted vs. actual prices for the test set
+plot(train_pred_df$predict, actual_train, 
+     main = "Prediction vs. Actual (Train Set)", 
+     xlab = "Predicted Price", 
+     ylab = "Actual Price", 
+     pch=16, col="blue",
+     xlim= range(all_vals_train),
+     ylim= range(all_vals_train))
+
+# Add the reference 1:1 line
+abline(0,1,lwd=2,col='red')
 ```
 ### Test Set Mean Error / Prediction Price vs. Actual Price
-```{r train-set-error, echo=TRUE, warning=FALSE}
-mean_error <- mean(abs(train_predictions - train_NN_h2o$PRICE))
-mean_error
-
-plot(as.data.frame(train_predictions)$predict, train_NN$PRICE, title = "Prediction Price vs. Actual Price", xlab = "Price Prediction", ylab = "Actual Price")
-abline(0,1,lw=3,col='red')
-```
-### Test Set Predictions
-```{r test-set-predictions, echo=TRUE, results= 'hide', message=FALSE, warning=FALSE}
+```{r test-set-error, echo=TRUE, warning=FALSE, message=FALSE}
 #Test Set Predictions / Evaluation
-test_predictions <- h2o.predict(best_model,test_NN_h2o)
-print(test_predictions)
-```
-### Test Set Mean Error / Prediction Price vs. Actual Price
-```{r test-set-error, echo=TRUE, warning=FALSE}
-mean_error <- mean(abs(test_predictions - test_NN_h2o$PRICE))
-mean_error
+test_pred_df <- as.data.frame(h2o.predict(best_model,test_NN_h2o))
+actual_test <- as.vector(as.data.frame(test_NN_h2o)$PRICE)
 
-plot(as.data.frame(test_predictions)$predict, test_NN$PRICE, title = "Prediction Price vs. Actual Price", xlab = "Price Prediction", ylab = "Actual Price")
-abline(0,1,lw=3,col='red')
+# MAE for Test Set
+mean_error_test <- mean(abs(test_pred_df$predict - actual_test))
+
+# RMSE for Test Set
+rmse_test <- sqrt(mean((test_pred_df$predict - actual_test)^2))
+
+# R² for Test Set
+sst_test <- sum((actual_test - mean(actual_test))^2)
+sse_test <- sum((test_pred_df$predict - actual_test)^2)
+r2_test <- 1 - sse_test / sst_test
+
+# Print test results clearly
+cat("Test MAE:", round(mean_error_test,2), "\n")
+cat("Test RMSE:", round(rmse_test,2), "\n")
+cat("Test R²:", round(r2_test,2), "\n")
+
+# Combine actual and predicted values to set axis limits appropriately
+all_vals_test <- c(actual_test, test_pred_df$predict)
+
+
+# Plot predicted vs. actual prices for the test set
+plot(test_pred_df$predict, actual_test, 
+     main = "Prediction vs. Actual (Test Set)", 
+     xlab = "Predicted Price", 
+     ylab = "Actual Price", 
+     pch=16, col="darkgreen",
+     xlim= range(all_vals_test),
+     ylim= range(all_vals_test))
+
+# Add the reference 1:1 line
+abline(0,1,lwd=2,col='red')
 ```
 
 # 6. LIME for Model Explanation
 Local Interpretable Model-agnostic Explanations (LIME) is a technique that approximates any black box 
 machine learning model with a local, interpretable model to explain each individual prediction.
+
+### Custom functions for LIME compatibility with H2O regression model
+```{r lime-compatibility, echo=TRUE, message=FALSE, warning=FALSE}
+#Ensure LIME recognizes the H2O model as a regression model
+model_type.H2ORegressionModel <- function(x, ...) "regression"
+
+#Define how LIME should get predictions from the H2O model
+predict_model.H2ORegressionModel <- function(x, newdata, ...){
+  as.data.frame(h2o.predict(x, as.h2o(newdata)))
+}
+```
 
 ### Applying LIME
 ```{r applying-lime, echo=TRUE, results= 'hide', message=FALSE, warning=FALSE}
@@ -315,3 +376,33 @@ explanation <- explain(data_for_lime, explainer_price, n_labels = 2, n_features 
 plot_features(explanation, ncol=1)
 plot_explanations(explanation)
 ```
+
+# 7. Conclusion & Insights
+
+### Model Performance Summary
+The H2O deep learning model was trained on a comprehensive, engineered dataset of DC housing records. It achieved the following performance metrics:
+
+- **Train Set Mean Absolute Error (MAE):** `r round(mean_error_train, 2)`
+- **Train Set Root Mean Squared Error (RMSE):** `r round(rmse_train, 2)`
+- **Train Set R²:** `r round(r2_train, 3)`
+
+- **Test Set Mean Absolute Error (MAE):** `r round(mean_error_test, 2)`
+- **Test Set Root Mean Squared Error (RMSE):** `r round(rmse_test, 2)`
+- **Test Set R²:** `r round(r2_test, 3)`
+
+These results indicate that the model performs reasonably well on unseen data, suggesting good generalization with some variance likely due to location- or condition-based outliers.
+
+---
+
+### LIME Model Interpretability
+
+Using **LIME**, we examined how the model made individual predictions. Key insights:
+
+- The most influential features were often **location-based** (e.g., neighborhood price averages, census block), as well as **house condition** and **structure characteristics**.
+- LIME helped validate that the model aligns with housing domain intuition—e.g., houses in neighborhoods with higher average prices predict higher prices, all else equal.
+
+---
+
+### Final Thoughts
+
+This pipeline demonstrates the value of combining deep learning with explainability. By engineering domain-specific features and using tools like LIME, we can not only build accurate predictive models, but also interpret their reasoning—crucial for applications like real estate appraisal, policy evaluation, or property investment.
