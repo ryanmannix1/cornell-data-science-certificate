@@ -1,0 +1,40 @@
+# Naive Bayes Example on HR Data
+
+This repository demonstrates how to use a Naive Bayes classifier (from the `e1071` R package) to predict employee performance scores (`PerfScore`) based on their mechanical aptitude (`MechanicalApt`). The example uses a real-world style HR dataset and walks through model training, prediction, and evaluation.
+
+## Files
+
+- `NaiveBayesHW.csv` — The sample HR dataset with columns including `PerfScore` and `MechanicalApt`.
+- `naive_bayes_example.R` — The main R script implementing the Naive Bayes workflow.
+
+## Usage
+
+### 1. Install Required Package
+
+Make sure you have the `e1071` package installed:
+
+### 2. Run the Script
+
+Open `naive_bayes_example.R` in your R environment or RStudio and run the script.  
+The script will:
+
+- Load the HR data from `NaiveBayesHW.csv`
+- Train a Naive Bayes classifier to predict `PerfScore` using `MechanicalApt`
+- Print the model summary and predictions
+- Calculate and print the number and percentage of correct predictions
+- Show the predictions and class probabilities for the 10th individual in the dataset
+
+### 3. Output Example
+
+The output will display:
+
+- The trained Naive Bayes model details
+- Predictions for all individuals
+- The number and percent of correct predictions (model accuracy)
+- Data and probability predictions for the 10th individual
+
+## Example Output
+
+Number of correctly predicted Performance Scores: 85 
+Total Number of Performance Scores: 100 
+Percent Correct: 85%
