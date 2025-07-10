@@ -1,0 +1,31 @@
+🏠 Home Offer Acceptance Prediction using SVM
+This project uses Support Vector Machines (SVM) with both Radial Basis Function (RBF) and Linear kernels to model and predict whether a home offer will be accepted or declined. 
+It includes data preparation, exploratory visualizations, model training, evaluation, and comparative analysis using 3D plots.
+
+📁 Project Structure
+├── acquisitionacceptanceSVM.csv       # Original dataset
+├── Train_Test_Data_Split.RData        # Pre-saved train/test split for consistency
+├── home_offer_svm.R                   # Main R script
+├── README.md                          # Project documentation
+
+📌 Key Features
+-Loads and analyzes home offer dataset
+-Splits dataset into training and testing sets (or loads pre-split data)
+-Creates rich 3D interactive visualizations using plotly
+-Trains SVM models with both RBF and Linear kernels using e1071
+-Evaluates models using confusion matrices, accuracy, and precision metrics
+-Visualizes correct vs incorrect predictions in 3D
+-Compares performance between RBF and Linear models
+
+🔧 Requirements
+Ensure the following R packages are installed:
+install.packages(c("plotly", "e1071", "dplyr"))
+
+▶️ How to Run
+Clone or download this repository.
+Place acquisitionacceptanceSVM.csv and Train_Test_Data_Split.RData in your working directory.
+Open and run the script home_offer_svm.R in RStudio or your preferred R environment.
+
+📌 Notes
+A pre-generated training/testing split is used to maintain consistency across model runs. If you'd like to generate your own split, uncomment the corresponding code section and set a seed for reproducibility.
+Interactive plots require a compatible environment (e.g., RStudio Viewer or a web browser).
