@@ -14,4 +14,4 @@ The data science certificate consisted of the following core courses:
 
 This repository contains hands-on projects I completed using R as part of the data science coursework.
 
-**Note:** I am still in the process of uploading all course projects from my Cornell certificate. 
+**Note:** I am still in the process of uploading all course projects. 
