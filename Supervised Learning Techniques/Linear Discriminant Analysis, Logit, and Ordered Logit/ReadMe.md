@@ -54,9 +54,4 @@ At the end, the script prints a comparison using glue():
 
 🔍 Assumptions & Notes  
 Only MechanicalApt is used as a predictor due to collinearity  
-Assumes the CSV file is in the working directory  
-Uses max.col() to classify the most probable performance score in ordered logit predictions
-
-🧼 To-Do / Improvements  
-Add ROC curve  
-Consider cross-validation or train-test split for robustness  
+Assumes the CSV file is in the working directory
