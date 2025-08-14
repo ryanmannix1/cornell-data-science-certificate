@@ -1,11 +1,30 @@
-# HR Data Classification Tree
+📄 README: HRData_Classification_Tree.R  
 
-This project uses a classification tree to predict employee performance scores based on mechanical aptitude data.
+📌 Purpose  
+This script builds and evaluates a decision tree classifier to predict employee performance scores based on mechanical aptitude using the conditional inference tree algorithm (ctree). It provides model accuracy, a confusion matrix, and a visual decision tree.
 
-## Requirements
-- R (>= 4.0.0)
-- partykit package
+📂 Input Data  
+File: HRdata4groups.csv  
+Required Columns -  
+PerfScoreID: Ordinal or categorical performance rating (target variable)  
+MechanicalApt: Numeric score representing mechanical aptitude (predictor)  
 
-## Files
-- `HRdata_Classification_Tree.R`: Main analysis script
-- `HRdata4groups.csv`: Input dataset
+🛠️ Dependencies  
+The script requires the following R package:  
+library(partykit)  # For building and visualizing conditional inference trees  
+
+Install it if not already available:  
+install.packages("partykit")
+
+🔄 Workflow Overview  
+-Data Import & Preparation  
+-Loads the HR dataset from CSV  
+-Converts PerfScoreID into a categorical variable (factor) for classification  
+-Model Training  
+-Trains a conditional inference tree using ctree() from the partykit package  
+-Predicts performance groupings (PerfScoreID) using MechanicalApt  
+-Model Evaluation  
+-Calculates accuracy by comparing predicted vs actual performance scores  
+-Generates a confusion matrix for detailed classification performance  
+-Visualization  
+-Plots the decision tree structure using plot(ctout)  
