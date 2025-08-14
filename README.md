@@ -1,5 +1,5 @@
 # Cornell-Data-Science-Certificate
-Course projects highlighting the skills gained during my [certificate](https://ecornell.cornell.edu/certificates/data-science-analytics/data-science/).
+Course projects highlighting the skills gained during my certificate.
 
 ## 📚 Certificate Overview
 
