@@ -73,6 +73,10 @@ frame <- frame %>%
     )
   )
 
+#Confusion Matrix
+LDA_CM <- table(Actual = frame$CollapseScore, Predicted = frame$lm_group)
+print(LDA_CM)
+
 #Model Accuracy (2 Performance Groups)
 LDA_Model_Accuracy <- sum(frame$lm_group == frame$CollapseScore) / length(frame$CollapseScore)
 print(LDA_Model_Accuracy)
@@ -102,6 +106,10 @@ frame <- frame %>%
     )
   )
 
+#Confusion Matrix
+Logit_CM <- table(Actual = frame$CollapseScore, Predicted = frame$logit_group)
+print(Logit_CM)
+
 #Model Accuracy (2 Performance Groups)
 Logit_Model_Accuracy <- sum(frame$logit_group == frame$CollapseScore) / length(frame$CollapseScore)
 print(Logit_Model_Accuracy)
@@ -127,6 +135,9 @@ frame <- frame %>%
     ologit_group = max.col(select(.,starts_with('PerfScoreID=')), ties.method = "first")
     )
 
+#Confusion Matrix
+table(Actual = frame$PerfScoreID, Predicted = frame$ologit_group)
+
 #Model Accuracy (4 Performance Groups)
 Ologit_Model_Accuracy <- sum(frame$ologit_group == frame$PerfScoreID) / length(frame$PerfScoreID)
 print(Ologit_Model_Accuracy)
@@ -138,6 +149,10 @@ plot(frame$MechanicalApt, frame$`PerfScoreID=3`)
 plot(frame$MechanicalApt, frame$`PerfScoreID=4`)
 plot(frame$MechanicalApt, frame$ologit_group)
 plot(frame$PerfScoreID, frame$ologit_group)
+
+#LDA - Logit Confusion Matrix Comparison
+LDA_CM - Logit_CM
+#LDA classifies 9 more satisfactory employees as unsatisfactory & 1 less unsatisfactory employees as satisfactory.
 
 #Comparison
 glue("Linear Discriminant Model Accuracy: {round(LDA_Model_Accuracy * 100, 2)}% (2 prediction groups)")
