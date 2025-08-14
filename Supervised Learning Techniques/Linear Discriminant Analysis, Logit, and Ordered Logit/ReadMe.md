@@ -58,5 +58,5 @@ Assumes the CSV file is in the working directory
 Uses max.col() to classify the most probable performance score in ordered logit predictions
 
 🧼 To-Do / Improvements  
-Add model diagnostics (e.g., ROC curves, confusion matrices)   
+Add ROC curve  
 Consider cross-validation or train-test split for robustness  
