@@ -1,4 +1,4 @@
-###Supervised Learning Techniques
+### Supervised Learning Techniques
 
 1. **Naive Bayes**
 2. **Classification Trees**
