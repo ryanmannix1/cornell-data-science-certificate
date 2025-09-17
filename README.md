@@ -14,4 +14,4 @@ The data science certificate consisted of the following core courses:
 
 This repository contains hands-on projects I completed using R as part of the data science coursework.
 
-**Note:** I am still in the process of uploading all course projects. 
+**Note:** I'm currently in the process of uploading and converting all course projects to R Markdown.
